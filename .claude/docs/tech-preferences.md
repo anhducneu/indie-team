@@ -7,7 +7,7 @@
 | Java version | Java 21 | Use virtual threads where applicable |
 | Build tool | Gradle (Kotlin DSL) | `build.gradle.kts` |
 | ORM | Spring Data JPA + Hibernate | Use native queries only when necessary |
-| DB migrations | Flyway | `classpath:db/migration` |
+| DB migrations | Liquibase | `classpath:db/changelog/db.changelog-master.yaml` |
 | Validation | Jakarta Validation (Bean Validation 3) | `@Valid` on controllers |
 | HTTP client | Spring WebClient (reactive) | For external API calls |
 | JSON | Jackson | Configure to fail on unknown properties |

@@ -32,43 +32,45 @@
 
 ## Agent Roster
 
+Each agent has a dedicated definition file in `agents/` with full role, authority, responsibilities, escalation paths, and output format.
+
 ### Planning Agents
-| Agent | Role |
-|---|---|
-| `@product-manager` | Requirements, user stories, acceptance criteria, compliance impact |
-| `@project-manager` | Sprints, priorities, milestones, blockers, dependency tracking |
-| `@system-architect` | System design, ADRs, microservice boundaries, event topology |
+| Agent | Definition | Role |
+|---|---|---|
+| `@product-manager` | [agents/product-manager.md](.claude/agents/product-manager.md) | Requirements, user stories, acceptance criteria, compliance impact |
+| `@project-manager` | [agents/project-manager.md](.claude/agents/project-manager.md) | Sprints, priorities, milestones, blockers, dependency tracking |
+| `@system-architect` | [agents/system-architect.md](.claude/agents/system-architect.md) | System design, ADRs, microservice boundaries, event topology |
 
 ### Design Agents
-| Agent | Role |
-|---|---|
-| `@ux-designer` | React component specs, user flows, accessibility (WCAG 2.1) |
-| `@api-designer` | REST contracts, OpenAPI specs, versioning strategy |
-| `@db-designer` | PostgreSQL schema, Flyway migrations, indexing, partitioning |
-| `@event-designer` | Kafka topic design, Avro/JSON schemas, event contracts |
+| Agent | Definition | Role |
+|---|---|---|
+| `@ux-designer` | [agents/ux-designer.md](.claude/agents/ux-designer.md) | React component specs, user flows, accessibility (WCAG 2.1) |
+| `@api-designer` | [agents/api-designer.md](.claude/agents/api-designer.md) | REST contracts, OpenAPI specs, versioning strategy |
+| `@db-designer` | [agents/db-designer.md](.claude/agents/db-designer.md) | PostgreSQL schema, Flyway migrations, indexing, partitioning |
+| `@event-designer` | [agents/event-designer.md](.claude/agents/event-designer.md) | Kafka topic design, Avro/JSON schemas, event contracts |
 
 ### Development Agents
-| Agent | Role |
-|---|---|
-| `@frontend-dev` | React components, TypeScript, state management, unit tests |
-| `@backend-dev` | Spring Boot services, JPA/repositories, business logic |
-| `@integration-dev` | Kafka producers/consumers, async flows, retries, DLQ |
-| `@infra-engineer` | AWS CDK/Terraform, Docker Compose, LocalStack, CI/CD |
-| `@security-engineer` | Auth (OAuth2/JWT), encryption, secrets, vuln scanning |
+| Agent | Definition | Role |
+|---|---|---|
+| `@frontend-dev` | [agents/frontend-dev.md](.claude/agents/frontend-dev.md) | React components, TypeScript, state management, unit tests |
+| `@backend-dev` | [agents/backend-dev.md](.claude/agents/backend-dev.md) | Spring Boot services, JPA/repositories, business logic |
+| `@integration-dev` | [agents/integration-dev.md](.claude/agents/integration-dev.md) | Kafka producers/consumers, async flows, retries, DLQ |
+| `@infra-engineer` | [agents/infra-engineer.md](.claude/agents/infra-engineer.md) | AWS CDK/Terraform, Docker Compose, LocalStack, CI/CD |
+| `@security-engineer` | [agents/security-engineer.md](.claude/agents/security-engineer.md) | Auth (OAuth2/JWT), encryption, secrets, vuln scanning |
 
 ### Quality Agents
-| Agent | Role |
-|---|---|
-| `@qa-engineer` | Test plans, exploratory testing, **runs Playwright E2E suite**, E2E sign-off (Definition of Done gate) |
-| `@test-automator` | JUnit 5, Testcontainers, Playwright test authoring, contract tests |
-| `@code-reviewer` | PR reviews, standards enforcement, security flags |
-| `@compliance-auditor` | PCI-DSS, GDPR, audit logging, regulatory gap analysis |
+| Agent | Definition | Role |
+|---|---|---|
+| `@qa-engineer` | [agents/qa-engineer.md](.claude/agents/qa-engineer.md) | Test plans, exploratory testing, **runs Playwright E2E suite**, E2E sign-off (Definition of Done gate) |
+| `@test-automator` | [agents/test-automator.md](.claude/agents/test-automator.md) | JUnit 5, Testcontainers, Playwright test authoring, contract tests |
+| `@code-reviewer` | [agents/code-reviewer.md](.claude/agents/code-reviewer.md) | PR reviews, standards enforcement, security flags |
+| `@compliance-auditor` | [agents/compliance-auditor.md](.claude/agents/compliance-auditor.md) | PCI-DSS, GDPR, audit logging, regulatory gap analysis |
 
 ### Documentation Agents
-| Agent | Role |
-|---|---|
-| `@tech-writer` | README, runbooks, ADRs, changelogs |
-| `@api-documenter` | OpenAPI/Swagger, Postman collections, integration guides |
+| Agent | Definition | Role |
+|---|---|---|
+| `@tech-writer` | [agents/tech-writer.md](.claude/agents/tech-writer.md) | README, runbooks, ADRs, changelogs |
+| `@api-documenter` | [agents/api-documenter.md](.claude/agents/api-documenter.md) | OpenAPI/Swagger, Postman collections, integration guides |
 
 ---
 
@@ -96,13 +98,39 @@ Question → Options → Decision → Draft → Human Approval → Execute
 
 @.claude/docs/coordination-rules.md
 
-## Coding Standards
+## Path-Scoped Coding Rules
+
+Apply the rule file that matches the files you are working with. Load only the relevant file — do not load all rules for every task.
+
+| Files | Rules |
+|---|---|
+| `services/**/*.java` | @rules/java-spring.md |
+| `frontend/**/*.{ts,tsx}` | @rules/react-typescript.md |
+| `services/**/db/migration/*.sql` | @rules/sql-migrations.md |
+| `services/**/infrastructure/messaging/**`, `schemas/kafka/**` | @rules/kafka-events.md |
+| `infrastructure/**/*.ts` | @rules/cdk-infra.md |
+| `**/Dockerfile`, `docker-compose*.yml` | @rules/docker.md |
+
+Full general standards (applies when no path-scoped rule covers the file):
 
 @.claude/docs/coding-standards.md
 
 ## Technical Preferences
 
 @.claude/docs/tech-preferences.md
+
+## Automated Hooks
+
+The following hooks run automatically to enforce quality and security:
+
+| Hook | Trigger | Purpose |
+|---|---|---|
+| `session-start.sh` | Session start | Print agent roster, branch context, compliance reminders |
+| `validate-write.sh` | Before Write/Edit | Scan for hardcoded secrets, PII in logs, SQL injection risk |
+| `validate-commit.sh` | Before `git commit` | Check commit message format, scan staged diff for secrets |
+| `validate-push.sh` | Before `git push` | Branch protection, secrets scan, test gate reminder |
+
+Hook scripts: `.claude/hooks/` | Configuration: `.claude/settings.json`
 
 ## Directory Structure
 

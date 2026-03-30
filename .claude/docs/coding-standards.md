@@ -158,11 +158,13 @@ version      BIGINT NOT NULL DEFAULT 0  -- optimistic locking
 - Soft deletes: add `deleted_at TIMESTAMPTZ` — never `DELETE` financial records
 
 ### Migrations
-- Use Flyway (preferred) or Liquibase
-- Migration files: `V{n}__{description}.sql` — e.g., `V3__add_idempotency_key_to_payments.sql`
-- Migrations must be backward-compatible with the previous deployed version
-- No DDL inside application code — schema changes only via migration files
-- Every migration must be reviewed by `@db-designer` and `@compliance-auditor`
+- Use Liquibase (YAML format)
+- Changelog files: `services/{name}/src/main/resources/db/changelog/changes/{nnn}-{description}.yaml`
+- Master changelog: `db/changelog/db.changelog-master.yaml` includes all changesets in order
+- Every YAML changeset requires: `id`, `author: db-designer`, `comment`, `labels`, `changes`, and `rollback`
+- Changesets must be backward-compatible with the previous deployed version
+- No DDL inside application code — schema changes only via changelog files
+- Every changeset must be reviewed by `@db-designer` and `@compliance-auditor`
 
 ---
 
